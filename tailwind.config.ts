@@ -6,6 +6,8 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  // class significa que quem vai inndicar se eh dark ou nao eh o maior elemento da hierarquia com a flag dark
+  darkMode: 'class',
   theme: {
     extend: {
       backgroundImage: {
