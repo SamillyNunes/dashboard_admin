@@ -4,7 +4,6 @@ import MenuItem from "./MenuItem";
 export default function SideMenu(){
     return (
         <aside>
-            <h1>Menu</h1>
             <ul>
                 <MenuItem url="/" text="Inicio" icon={HomeIcon} />
                 <MenuItem url="/settings" text="Ajustes" icon={SettingsIcon} />
