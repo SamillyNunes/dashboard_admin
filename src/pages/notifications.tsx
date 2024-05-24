@@ -6,8 +6,6 @@ export default function Notifications(){
 
     return (
         <Layout title="Notificações" subtitle="Suas mensagens" >
-            <h3>Notificações</h3>
-            <button onClick={changeTheme} >Theme</button>
         </Layout>
     );
 }
