@@ -1,4 +1,5 @@
 import Input from "@/components/auth/Input";
+import { WarningIcon } from "@/components/icons";
 import { useState } from "react";
 
 const imageSrc = "https://images.unsplash.com/photo-1716725239696-ae7ee120cde1?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
@@ -6,15 +7,25 @@ const imageSrc = "https://images.unsplash.com/photo-1716725239696-ae7ee120cde1?q
 export default function Auth(){
     const [mode, setMode] = useState<'login' | 'register'>('login');
 
+    const [error, setError] = useState<string | null>(null);
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     function submit(){
         if(mode==='login'){
             console.log('Login');
+            showError('Ocurred a login error');
         }else {
             console.log('Cadastrar');
+            showError('Ocurred a signup error');
         }
+    }
+
+    function showError(msg:string, duration=5){
+        setError(msg);
+        // depois desse tempo, vai setar pra nulo:
+        setTimeout(()=>setError(null), duration*1000);
     }
 
     return (
@@ -27,6 +38,17 @@ export default function Auth(){
                 <h1 className="text-3xl font-bold mb-5">
                     {mode === 'login' ? 'Entre com a sua conta' : 'Cadastre-se na Plataforma'}
                 </h1>
+
+                {error && (
+                    <div className="
+                        flex items-center 
+                        bg-red-400 text-white p-2  rounded-lg my-2 
+                    ">
+                        {WarningIcon()}
+                        <span className="ml-3 text-sm"> {error} </span>
+                    </div>
+                )}
+
                 <Input 
                     label="Email"
                     value={email}
