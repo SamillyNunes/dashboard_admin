@@ -1,8 +1,11 @@
+import useAuth from "@/data/hook/useAuth";
 import { HomeIcon, LogoutIcon, NotificationsIcon, SettingsIcon } from "../icons";
 import Logo from "./Logo";
 import MenuItem from "./MenuItem";
 
 export default function SideMenu(){
+    const { logout } = useAuth();
+
     return (
         <aside className="
             flex flex-col 
@@ -26,7 +29,7 @@ export default function SideMenu(){
                 <MenuItem 
                     text="Sair" 
                     icon={LogoutIcon} 
-                    onClick={()=>console.log('Saindo...')} 
+                    onClick={logout} 
                     className="
                         text-red-600 dark:text-red-400
                         hover:bg-red-400 hover:text-white dark:hover:text-white
