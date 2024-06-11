@@ -42,13 +42,17 @@ export function AuthProvider(props: any){
     const [loading, setLoading] = useState<boolean | null>(null);
 
     useEffect(()=>{
-        //essa funcao abaixo vai ficar observando mudancas no token do usuario e quando acontecer vai chamar a funcao em questao
-        // eh importante observar que quando da o refresh eh nula, mas depois eh alterada
-        const cancel = firebase.auth().onIdTokenChanged(setSession);
+        // Checando abaixo se o cookie ainda esta valido, so entao setara a sessao
+        if(Cookies.get('admin-template-samydev-auth')=="true"){
+            //essa funcao abaixo vai ficar observando mudancas no token do usuario e quando acontecer vai chamar a funcao em questao
+            // eh importante observar que quando da o refresh eh nula, mas depois eh alterada
+            const cancel = firebase.auth().onIdTokenChanged(setSession);
 
-        // foi pega acima a funcao que cancela esse registro de monitoramento de token, e abaixo diz que quando
-        // o componente desmontar, vai chamar essa funcao
-        return () => cancel();
+            // foi pega acima a funcao que cancela esse registro de monitoramento de token, e abaixo diz que quando
+            // o componente desmontar, vai chamar essa funcao
+            return () => cancel();
+        }
+
     }, []);
 
     async function setSession(firebaseUser: firebase.User | null){
