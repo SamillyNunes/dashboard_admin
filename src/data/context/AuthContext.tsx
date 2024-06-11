@@ -10,24 +10,37 @@ interface AuthContextProps {
 
 const AuthContext = createContext<AuthContextProps>({});
 
-// async function normalUser(firebaseUser: firebase.User): Promise<User>{
-//     const token = await firebaseUser.getIdToken();
+async function convertedUser(firebaseUser: firebase.User): Promise<User>{
+    
+    const token = await firebaseUser.getIdToken();
 
-//     return {
-//         uid: firebaseUser.uid,
-//         name: firebaseUser.displayName,
-//         email: firebaseUser.email,
-//         token,
-//         provider: firebaseUser.providerData[0]?.providerId,
-//         imageUrl: firebaseUser.photoURL,
-//     }
-// }
+    return {
+        uid: firebaseUser.uid,
+        name: firebaseUser.displayName,
+        email: firebaseUser.email,
+        token,
+        provider: firebaseUser.providerData[0]?.providerId,
+        imageUrl: firebaseUser.photoURL,
+    }
+}
 
 export function AuthProvider(props: any){
 
     const [user, setUser] = useState<User | undefined>(undefined);
 
     async function loginGoogle(){
+
+        const resp = await firebase.auth().signInWithPopup(
+            new firebase.auth.GoogleAuthProvider()
+        );
+
+        if(resp.user == null){
+            return;
+        }
+
+        const user = await convertedUser(resp.user);
+        
+        setUser(user!);
         route.push("/");
     }
 
