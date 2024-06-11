@@ -1,10 +1,13 @@
 import Input from "@/components/auth/Input";
 import { WarningIcon } from "@/components/icons";
+import useAuth from "@/data/hook/useAuth";
 import { useState } from "react";
 
 const imageSrc = "https://images.unsplash.com/photo-1716725239696-ae7ee120cde1?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
 export default function Auth(){
+    const { user, loginGoogle } = useAuth();
+
     const [mode, setMode] = useState<'login' | 'register'>('login');
 
     const [error, setError] = useState<string | null>(null);
@@ -73,7 +76,7 @@ export default function Auth(){
 
                 <hr className="my-6 border-gray-300 w-full" />
 
-                <button onClick={submit} className="
+                <button onClick={loginGoogle} className="
                     w-full bg-red-500 hover:bg-red-400 text-white rounded-lg
                     px-4 py-3 
                 ">
