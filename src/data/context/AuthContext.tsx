@@ -1,7 +1,8 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import firebase from "../../firebase/config";
 import User from "@/model/User";
 import route from "next/router";
+import Cookies from "js-cookie";
 
 interface AuthContextProps {
     user?: User;
@@ -24,9 +25,45 @@ async function convertedUser(firebaseUser: firebase.User): Promise<User>{
     }
 }
 
+function manageCookies(loggedIn: boolean){
+    if(loggedIn){
+        Cookies.set('admin-template-samydev-auth', `${loggedIn}`, {
+            expires: 7
+        });
+    } else {
+        Cookies.remove('admin-template-samydev-auth');
+    }
+}
+
 export function AuthProvider(props: any){
 
     const [user, setUser] = useState<User | undefined>(undefined);
+    const [loading, setLoading] = useState<boolean | null>(null);
+
+    useEffect(()=>{
+        //essa funcao abaixo vai ficar observando mudancas no token do usuario e quando acontecer vai chamar a funcao em questao
+        // eh importante observar que quando da o refresh eh nula, mas depois eh alterada
+        const cancel = firebase.auth().onIdTokenChanged(setSession);
+
+        // foi pega acima a funcao que cancela esse registro de monitoramento de token, e abaixo diz que quando
+        // o componente desmontar, vai chamar essa funcao
+        return () => cancel();
+    }, []);
+
+    async function setSession(firebaseUser: firebase.User | null){
+        if(firebaseUser?.email){
+            const user = await convertedUser(firebaseUser);
+            setUser(user);
+            manageCookies(true);
+            setLoading(false);
+            return user.email;
+        } else {
+            setUser(undefined);
+            manageCookies(false);
+            setLoading(false);
+            return false;
+        }
+    }
 
     async function loginGoogle(){
 
@@ -34,13 +71,7 @@ export function AuthProvider(props: any){
             new firebase.auth.GoogleAuthProvider()
         );
 
-        if(resp.user == null){
-            return;
-        }
-
-        const user = await convertedUser(resp.user);
-        
-        setUser(user!);
+        setSession(resp.user);
         route.push("/");
     }
 
