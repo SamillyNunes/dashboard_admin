@@ -8,6 +8,7 @@ interface AuthContextProps {
     user?: User;
     loginGoogle?: () => Promise<void>;
     logout?: () => Promise<void>;
+    loading?: boolean | null;
 }
 
 const AuthContext = createContext<AuthContextProps>({});
@@ -39,11 +40,11 @@ function manageCookies(loggedIn: boolean){
 export function AuthProvider(props: any){
 
     const [user, setUser] = useState<User | undefined>(undefined);
-    const [loading, setLoading] = useState<boolean | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(()=>{
         // Checando abaixo se o cookie ainda esta valido, so entao setara a sessao
-        if(Cookies.get('admin-template-samydev-auth')=="true"){
+        if(Cookies.get('admin-template-samydev-auth')){
             //essa funcao abaixo vai ficar observando mudancas no token do usuario e quando acontecer vai chamar a funcao em questao
             // eh importante observar que quando da o refresh eh nula, mas depois eh alterada
             const cancel = firebase.auth().onIdTokenChanged(setSession);
@@ -51,6 +52,8 @@ export function AuthProvider(props: any){
             // foi pega acima a funcao que cancela esse registro de monitoramento de token, e abaixo diz que quando
             // o componente desmontar, vai chamar essa funcao
             return () => cancel();
+        } else {
+            setLoading(false);
         }
 
     }, []);
@@ -100,7 +103,9 @@ export function AuthProvider(props: any){
         <AuthContext.Provider value={{
             user,
             loginGoogle,
-            logout
+            logout,
+            loading,
+
         }} >
             {props.children}
         </AuthContext.Provider>
