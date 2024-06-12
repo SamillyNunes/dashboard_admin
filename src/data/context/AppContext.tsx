@@ -1,21 +1,28 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 type Theme = 'dark' | '';
 
 interface AppContextProps{
-    theme?: Theme;
+    theme?: string;
     changeTheme?: () => void;
 }
 
 const AppContext = createContext<AppContextProps>({});
 
 export function AppProvider(props:any){
-    const [theme, setTheme] = useState<Theme>('dark');
+    const [theme, setTheme] = useState<string>('dark');
 
     function changeTheme(){
         // fazendo a alternancia, se for um, alterna pro outro
-        setTheme(theme==='' ? 'dark' : '');
+        const newTheme = theme==='' ? 'dark' : '';
+        setTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
     }
+
+    useEffect(()=>{
+        const savedTheme = localStorage.getItem('theme');
+        if(savedTheme!==null) setTheme(savedTheme);
+    }, []);
 
     return (
         <AppContext.Provider value={{
