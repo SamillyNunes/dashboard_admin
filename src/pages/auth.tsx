@@ -5,8 +5,8 @@ import { useState } from "react";
 
 const imageSrc = "https://images.unsplash.com/photo-1716725239696-ae7ee120cde1?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
-export default function Auth(){
-    const { user, loginGoogle } = useAuth();
+export default function Auth() {
+    const { loginGoogle, login, signUp } = useAuth();
 
     const [mode, setMode] = useState<'login' | 'register'>('login');
 
@@ -15,20 +15,39 @@ export default function Auth(){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    function submit(){
-        if(mode==='login'){
-            console.log('Login');
-            showError('Ocurred a login error');
-        }else {
-            console.log('Cadastrar');
-            showError('Ocurred a signup error');
+    async function submit() {
+        console.log('Submiting...');
+
+        try {
+            console.log('1o if');
+
+            if (mode === 'login') {
+                await login?.(email, password);
+            } else {
+                console.log('Cadastrar');
+                await signUp?.(email, password);
+            }
+        } catch (e) {
+            console.log('Catching submiting error...');
+
+            let msg;
+
+            if (e instanceof Error) {
+                console.log(e);
+                msg = e.message;
+            } else {
+                msg = String(e);
+            }
+
+            showError(msg);
+
         }
     }
 
-    function showError(msg:string, duration=5){
+    function showError(msg: string, duration = 5) {
         setError(msg);
         // depois desse tempo, vai setar pra nulo:
-        setTimeout(()=>setError(null), duration*1000);
+        setTimeout(() => setError(null), duration * 1000);
     }
 
     return (
@@ -52,7 +71,7 @@ export default function Auth(){
                     </div>
                 )}
 
-                <Input 
+                <Input
                     label="Email"
                     value={email}
                     type="email"
@@ -83,17 +102,17 @@ export default function Auth(){
                     Entrar com Google
                 </button>
 
-                {mode=== 'login' ? (
+                {mode === 'login' ? (
                     <p className="mt-8">
                         Novo por aqui?
-                        <a onClick={()=>setMode('register')} className="
+                        <a onClick={() => setMode('register')} className="
                             text-blue-500 hover:text-blue-700 font-semibold cursor-pointer
                         "> Crie uma conta gratuitamente</a>
                     </p>
                 ) : (
                     <p className="mt-8">
                         Já faz parte da nossa comunidade?
-                        <a onClick={()=>setMode('login')} className="
+                        <a onClick={() => setMode('login')} className="
                             text-blue-500 hover:text-blue-700 font-semibold cursor-pointer
                         "> Entre com as suas credenciais</a>
                     </p>
